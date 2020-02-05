@@ -16,5 +16,16 @@ function assigningLetterToPlayer() {
 	echo "Assigned letter to player : $player"
 
 }
+
+function tossToPlay() {
+	if [ $((RANDOM%2)) -eq 0 ]
+	then
+		echo "Player go first."
+	else
+		echo "Player go second."
+	fi
+}
+
 resettingBoard
 assigningLetterToPlayer
+tossToPlay
