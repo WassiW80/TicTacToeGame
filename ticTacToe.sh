@@ -1,4 +1,4 @@
-#!/bin/bash -x
+##!/bin/bash -x
 echo "Weclome to Tic Tac Toe Game."
 player=O
 #array declaration of array
@@ -26,6 +26,32 @@ function tossToPlay() {
 	fi
 }
 
+
+function displayBoard() {
+	echo "	${board[0]} ${board[1]} ${board[2]}"
+	echo "	${board[3]} ${board[4]} ${board[5]}"
+	echo "	${board[6]} ${board[7]} ${board[8]}"
+
+}
+
+function checkingEmptyCell() {
+	if [[ $position -ge 0 && $position -le 8 ]]
+	then
+		if [[ ${board[$position]} == . ]]
+		then
+			board[$position]=$player
+		else
+			echo "Cell is already occupied!!!"
+		fi
+		else
+			echo "Invalid cell value!!!"
+	fi
+	displayBoard
+}
+
 resettingBoard
 assigningLetterToPlayer
 tossToPlay
+displayBoard
+read -p "Enter position between 0 to 8: " position
+checkingEmptyCell
