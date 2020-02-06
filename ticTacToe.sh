@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 echo "Weclome to Tic Tac Toe Game."
 #constant
 TOTAL_CELL=9
@@ -6,7 +6,9 @@ TOTAL_CELL=9
 #variable
 count=0
 player=O
+computer=X
 winner=0
+switchPlayer=1
 #array declaration of array
 declare -a board
 
@@ -18,17 +20,20 @@ function assigningLetterToPlayer() {
 	if [ $((RANDOM%2)) -eq 0 ]
 	then
 		player=X
+		computer=O
 	fi
 	echo "Assigned letter to player : $player"
-
+   echo "Assigned letter to computer : $computer"
 }
 
 function tossToPlay() {
 	if [ $((RANDOM%2)) -eq 0 ]
 	then
+		switchPlayer=0
 		echo "Player go first."
 	else
-		echo "Player go second."
+		switchPlayer=1
+		echo "Computer go first."
 	fi
 }
 
@@ -45,6 +50,7 @@ function checkingEmptyCell() {
 		then
 			if [[ ${board[$position]} == . ]]
 			then
+   			echo "Player's turn: "
 				board[$position]=$player
 				((count++))
 			else
@@ -88,15 +94,15 @@ function winningCondition() {
 
 resettingBoard
 assigningLetterToPlayer
-tossToPlay
+#tossToPlay
 displayBoard
-	while [[ $count -ne $TOTAL_CELL ]]
-	do
-		read -p "Enter position between 1 to 9: " position
-		checkingEmptyCell
-		if [[ $winner -eq 1 ]]
-		then
-			echo Winner
-			break
-		fi
-	done
+while [[ $count -ne $TOTAL_CELL ]]
+do
+	read -p "Enter position between 1 to 9: " position
+	checkingEmptyCell
+	if [[ $winner -eq 1 ]]
+	then
+		echo Winner
+		break
+	fi
+done
