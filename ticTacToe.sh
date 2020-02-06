@@ -1,11 +1,17 @@
-##!/bin/bash -x
+#!/bin/bash
 echo "Weclome to Tic Tac Toe Game."
+#constant
+TOTAL_CELL=9
+
+#variable
+count=0
 player=O
+winner=0
 #array declaration of array
 declare -a board
 
 function resettingBoard() {
-	board=(. . . . . . . . .)
+	board=(. . . . . . . . . .)
 }
 
 function assigningLetterToPlayer() {
@@ -28,30 +34,69 @@ function tossToPlay() {
 
 
 function displayBoard() {
-	echo "	${board[0]} ${board[1]} ${board[2]}"
-	echo "	${board[3]} ${board[4]} ${board[5]}"
-	echo "	${board[6]} ${board[7]} ${board[8]}"
+	echo "	${board[1]} ${board[2]} ${board[3]}"
+	echo "	${board[4]} ${board[5]} ${board[6]}"
+	echo "	${board[7]} ${board[8]} ${board[9]}"
 
 }
 
 function checkingEmptyCell() {
-	if [[ $position -ge 0 && $position -le 8 ]]
-	then
-		if [[ ${board[$position]} == . ]]
+		if [[ $position -ge 1 && $position -le 9 ]]
 		then
-			board[$position]=$player
-		else
-			echo "Cell is already occupied!!!"
+			if [[ ${board[$position]} == . ]]
+			then
+				board[$position]=$player
+				((count++))
+			else
+				echo "Cell is already occupied!!!"
+			fi
+			else
+				echo "Invalid cell value!!!"
 		fi
-		else
-			echo "Invalid cell value!!!"
+		displayBoard
+		winningCondition $player
+}
+
+#function for checking winner
+#1. condition for row checking
+#2. condition for column checking
+#3. condition for diagonals
+#4. condition for anti-diagonals
+function winningCondition() {
+	for((i=1;i<=9;i=$(($i+3))))
+	do
+		if [[ ${board[$i]} == ${board[$i+1]} && ${board[$i+1]} == ${board[$i+2]} && ${board[$i+2]} == $1 ]]
+		then
+			winner=1
+		fi
+	done
+	for((i=1;i<=3;i++))
+	do
+		if [[ ${board[$i]} == ${board[$i+3]} && ${board[$i+3]} == ${board[$i+6]} && ${board[$i]} == $1 ]]
+		then
+			winner=1
+		fi
+	done
+	if [[ ${board[1]}  == ${board[5]} && ${board[5]} == ${board[9]} && ${board[5]} == $1 ]]
+	then
+		winner=1
+	elif [[ ${board[3]}  == ${board[5]} && ${board[5]} == ${board[7]} && ${board[5]} == $1 ]]
+	then
+		winner=1
 	fi
-	displayBoard
 }
 
 resettingBoard
 assigningLetterToPlayer
 tossToPlay
 displayBoard
-read -p "Enter position between 0 to 8: " position
-checkingEmptyCell
+	while [[ $count -ne $TOTAL_CELL ]]
+	do
+		read -p "Enter position between 1 to 9: " position
+		checkingEmptyCell
+		if [[ $winner -eq 1 ]]
+		then
+			echo Winner
+			break
+		fi
+	done
