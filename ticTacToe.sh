@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 echo "Weclome to Tic Tac Toe Game."
 #constant
 TOTAL_CELL=9
@@ -7,8 +7,10 @@ TOTAL_CELL=9
 count=0
 player=O
 computer=X
+turnChange=$player
 winner=0
 switchPlayer=1
+position=1
 #array declaration of array
 declare -a board
 
@@ -22,8 +24,6 @@ function assigningLetterToPlayer() {
 		player=X
 		computer=O
 	fi
-	echo "Assigned letter to player : $player"
-   echo "Assigned letter to computer : $computer"
 }
 
 function tossToPlay() {
@@ -39,28 +39,54 @@ function tossToPlay() {
 
 
 function displayBoard() {
-	echo "	${board[1]} ${board[2]} ${board[3]}"
-	echo "	${board[4]} ${board[5]} ${board[6]}"
-	echo "	${board[7]} ${board[8]} ${board[9]}"
+	echo "	+-----+ "
+	echo "	|${board[1]} ${board[2]} ${board[3]}|"
+	echo "	|${board[4]} ${board[5]} ${board[6]}|"
+	echo "	|${board[7]} ${board[8]} ${board[9]}|"
+	echo "	+-----+ "
+}
 
+function switchPlayer() {
+	echo "Player Letter is : $player || Computer Letter is : $computer"
+	if [[ $switchPlayer == 0 ]]
+	then
+		echo "Player turn: "
+		read -p "Enter position between 1 to 9: " position
+		turnChange=$player
+		checkingEmptyCell
+		board[$position]=$player
+		((count++))
+		switchPlayer=1
+	else
+		echo "Computer turn: "
+		computerPlayingToWin
+		position=$((RANDOM%9+1))
+		echo "Computer entered value: $position"
+		turnChange=$computer
+		checkingEmptyCell
+		board[$position]=$computer
+		((count++))
+		switchPlayer=0
+	fi
+		winningCondition $turnChange
 }
 
 function checkingEmptyCell() {
-		if [[ $position -ge 1 && $position -le 9 ]]
+	if [[ $position -ge 1 && $position -le 9 ]]
 		then
 			if [[ ${board[$position]} == . ]]
 			then
-   			echo "Player's turn: "
-				board[$position]=$player
-				((count++))
+			echo "............ $turnChange is placed at $position ............"
 			else
 				echo "Cell is already occupied!!!"
+				((count--))
+				switchPlayer
 			fi
 			else
 				echo "Invalid cell value!!!"
+				((count--))
+				switchPlayer
 		fi
-		displayBoard
-		winningCondition $player
 }
 
 #function for checking winner
@@ -92,17 +118,44 @@ function winningCondition() {
 	fi
 }
 
+function computerPlayingToWin() {
+	for((j=1;j<=9;j++))
+	do
+		if [[ ${board[$j]} == . ]]
+		then
+			board[$j]=$computer
+			winningCondition $computer
+			if [[ $winner -eq 1 ]]
+			then
+				displayBoard
+				echo "Winner is $computer's"
+				exit
+			else
+				board[$j]="."
+			fi
+		fi
+	done
+}
+
+function checkingGameStatus() {
+	if [[ $winner -eq 1 ]]
+	then
+		echo "Winner is $turnChange's"
+		exit
+	elif [[ $count -ge $TOTAL_CELL ]]
+	then
+		echo tie
+	fi
+}
+
 resettingBoard
 assigningLetterToPlayer
-#tossToPlay
+tossToPlay
 displayBoard
 while [[ $count -ne $TOTAL_CELL ]]
 do
-	read -p "Enter position between 1 to 9: " position
-	checkingEmptyCell
-	if [[ $winner -eq 1 ]]
-	then
-		echo Winner
-		break
-	fi
+	switchPlayer
+	clear
+	displayBoard
+	checkingGameStatus
 done
