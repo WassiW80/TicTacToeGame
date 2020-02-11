@@ -4,6 +4,7 @@ echo "Weclome to Tic Tac Toe Game."
 TOTAL_CELL=9
 
 #variable
+block=0
 count=0
 player=O
 computer=X
@@ -60,12 +61,16 @@ function switchPlayer() {
 	else
 		echo "Computer turn: "
 		computerPlayingToWin
-		position=$((RANDOM%9+1))
-		echo "Computer entered value: $position"
-		turnChange=$computer
-		checkingEmptyCell
-		board[$position]=$computer
-		((count++))
+		computerPlayingToBlock
+		if [[ $block == 0 ]]
+		then
+			position=$((RANDOM%9+1))
+			echo "Computer entered value: $position"
+			turnChange=$computer
+			checkingEmptyCell
+			board[$position]=$computer
+			((count++))
+		fi
 		switchPlayer=0
 	fi
 		winningCondition $turnChange
@@ -132,6 +137,28 @@ function computerPlayingToWin() {
 				exit
 			else
 				board[$j]="."
+			fi
+		fi
+	done
+}
+
+function computerPlayingToBlock() {
+	for((k=1;k<=9;k++))
+	do
+		if [[ ${board[$k]} == . ]]
+		then
+			board[$k]=$player
+			winningCondition $player
+			if [[ $winner -eq 1 ]]
+			then
+				board[$k]=$computer
+				winner=0
+				block=1
+				((count++))
+				displayBoard
+				break
+			else
+				board[$k]="."
 			fi
 		fi
 	done
