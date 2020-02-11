@@ -56,7 +56,6 @@ function switchPlayer() {
 		turnChange=$player
 		checkingEmptyCell
 		board[$position]=$player
-		((count++))
 		switchPlayer=1
 	else
 		echo "Computer turn: "
@@ -64,12 +63,7 @@ function switchPlayer() {
 		computerPlayingToBlock
 		if [[ $block == 0 ]]
 		then
-			position=$((RANDOM%9+1))
-			echo "Computer entered value: $position"
-			turnChange=$computer
-			checkingEmptyCell
-			board[$position]=$computer
-			((count++))
+			takeAvailableCorners
 		fi
 		switchPlayer=0
 	fi
@@ -82,14 +76,13 @@ function checkingEmptyCell() {
 			if [[ ${board[$position]} == . ]]
 			then
 			echo "............ $turnChange is placed at $position ............"
+			((count++))
 			else
 				echo "Cell is already occupied!!!"
-				((count--))
 				switchPlayer
 			fi
 			else
 				echo "Invalid cell value!!!"
-				((count--))
 				switchPlayer
 		fi
 }
@@ -100,7 +93,7 @@ function checkingEmptyCell() {
 #3. condition for diagonals
 #4. condition for anti-diagonals
 function winningCondition() {
-	for((i=1;i<=9;i=$(($i+3))))
+	for((i=1;i<=$TOTAL_CELL;i=$(($i+3))))
 	do
 		if [[ ${board[$i]} == ${board[$i+1]} && ${board[$i+1]} == ${board[$i+2]} && ${board[$i+2]} == $1 ]]
 		then
@@ -124,7 +117,7 @@ function winningCondition() {
 }
 
 function computerPlayingToWin() {
-	for((j=1;j<=9;j++))
+	for((j=1;j<=$TOTAL_CELL;j++))
 	do
 		if [[ ${board[$j]} == . ]]
 		then
@@ -143,7 +136,7 @@ function computerPlayingToWin() {
 }
 
 function computerPlayingToBlock() {
-	for((k=1;k<=9;k++))
+	for((k=1;k<=$TOTAL_CELL;k++))
 	do
 		if [[ ${board[$k]} == . ]]
 		then
@@ -160,6 +153,22 @@ function computerPlayingToBlock() {
 			else
 				board[$k]="."
 			fi
+		fi
+	done
+}
+
+function takeAvailableCorners() {
+	for((l=1;l<=$TOTAL_CELL;l=$l+2))
+	do
+		if [[ $l == 5 ]]
+		then
+			l=$(($l+2))
+		fi
+		if [[ ${board[$l]} == . ]]
+		then
+			board[$l]=$computer
+			((count++))
+			break
 		fi
 	done
 }
