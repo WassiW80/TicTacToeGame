@@ -167,10 +167,15 @@ function takeAvailableCorners() {
 		if [[ ${board[$l]} == . ]]
 		then
 			board[$l]=$computer
+			local center=1
 			((count++))
 			break
 		fi
 	done
+	if [[ $center -ne 1 ]]
+	then
+		board[5]=$computer
+	fi
 }
 
 function checkingGameStatus() {
