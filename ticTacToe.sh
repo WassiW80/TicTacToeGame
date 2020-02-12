@@ -38,7 +38,6 @@ function tossToPlay() {
 	fi
 }
 
-
 function displayBoard() {
 	echo "	+-----+ "
 	echo "	|${board[1]} ${board[2]} ${board[3]}|"
@@ -130,6 +129,7 @@ function computerPlayingToWin() {
 				exit
 			else
 				board[$j]="."
+				block=0
 			fi
 		fi
 	done
@@ -174,8 +174,26 @@ function takeAvailableCorners() {
 	done
 	if [[ $center -ne 1 ]]
 	then
-		board[5]=$computer
+		if [[  ${board[5]} == . ]]
+		then
+			board[5]=$computer
+			((count++))
+		else
+			takeAvailableSides
+		fi
 	fi
+}
+
+function takeAvailableSides() {
+	for((m=2;m<=8;m+=2))
+	do
+		if [[ ${board[$m]} == . ]]
+		then
+			board[$m]=$computer
+			((count++))
+			break
+		fi
+	done
 }
 
 function checkingGameStatus() {
