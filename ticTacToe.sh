@@ -32,9 +32,6 @@ function tossToPlay() {
 	then
 		switchPlayer=0
 		echo "Player go first."
-	else
-		switchPlayer=1
-		echo "Computer go first."
 	fi
 }
 
@@ -46,25 +43,33 @@ function displayBoard() {
 	echo "	+-----+ "
 }
 
+function playerPlaying() {
+	echo "Player turn: "
+	read -p "Enter position between 1 to 9: " position
+	turnChange=$player
+	checkingEmptyCell
+	board[$position]=$player
+	switchPlayer=1
+}
+
+function computerPlaying() {
+	echo "Computer turn: "
+	computerPlayingToWin
+	computerPlayingToBlock
+	if [[ $block == 0 ]]
+	then
+		takeAvailableCorners
+	fi
+	switchPlayer=0
+}
+
 function switchPlayer() {
 	echo "Player Letter is : $player || Computer Letter is : $computer"
 	if [[ $switchPlayer == 0 ]]
 	then
-		echo "Player turn: "
-		read -p "Enter position between 1 to 9: " position
-		turnChange=$player
-		checkingEmptyCell
-		board[$position]=$player
-		switchPlayer=1
+		playerPlaying
 	else
-		echo "Computer turn: "
-		computerPlayingToWin
-		computerPlayingToBlock
-		if [[ $block == 0 ]]
-		then
-			takeAvailableCorners
-		fi
-		switchPlayer=0
+		computerPlaying
 	fi
 		winningCondition $turnChange
 }
@@ -152,7 +157,6 @@ function computerPlayingToBlock() {
 				break
 			else
 				board[$k]="."
-				block=0
 			fi
 		fi
 	done
@@ -173,11 +177,16 @@ function takeAvailableCorners() {
 			break
 		fi
 	done
+	takeCenter
+}
+
+function takeCenter() {
 	if [[ $center -ne 1 ]]
 	then
-		if [[  ${board[5]} == . ]]
+		local middle=$(($TOTAL_CELL+1))/2
+		if [[  ${board[$middle]} == . ]]
 		then
-			board[5]=$computer
+			board[$middle]=$computer
 			((count++))
 		else
 			takeAvailableSides
